@@ -782,6 +782,8 @@ const AdminDashboard = ({ user }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [message, setMessage] = useState(null);
+  const [showPermModal, setShowPermModal] = useState(false);
+  const [permForm, setPermForm] = useState({ id: null, role: '', permissions: [] });
 
   const isAdmin = user.role === 'admin';
   const canEdit = user.permissions.includes('edit') || isAdmin;
@@ -855,6 +857,42 @@ const AdminDashboard = ({ user }) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status, permissions: perms })
     }).then(() => fetchContent());
+  };
+
+  const openPermModal = (u) => {
+    setPermForm({
+      id: u.id,
+      role: u.role,
+      permissions: u.permissions || []
+    });
+    setShowPermModal(true);
+  };
+
+  const handlePermChange = (field, value) => {
+    setPermForm(prev => ({ ...prev, [field]: value }));
+  };
+
+  const togglePermission = (perm) => {
+    setPermForm(prev => {
+      const has = prev.permissions.includes(perm);
+      return {
+        ...prev,
+        permissions: has
+          ? prev.permissions.filter(p => p !== perm)
+          : [...prev.permissions, perm]
+      };
+    });
+  };
+
+  const savePermissions = () => {
+    fetch(`${API_BASE}/users/${permForm.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ role: permForm.role, permissions: permForm.permissions })
+    }).then(() => {
+      setShowPermModal(false);
+      fetchContent();
+    });
   };
 
   const handleFileChange = (e) => {
@@ -1006,6 +1044,7 @@ const AdminDashboard = ({ user }) => {
                       <th>ชื่อผู้ใช้</th>
                       <th>อีเมล</th>
                       <th>บทบาท</th>
+                      <th>สิทธิ์</th>
                       <th>สถานะ</th>
                       <th>จัดการ</th>
                     </tr>
@@ -1016,6 +1055,7 @@ const AdminDashboard = ({ user }) => {
                         <td>{u.username}</td>
                         <td>{u.email}</td>
                         <td>{u.role}</td>
+                        <td>{(u.permissions||[]).join(', ')}</td>
                         <td>
                           <span className={`badge ${u.status === 'active' ? 'bg-success' : 'bg-warning'}`}>
                             {u.status === 'active' ? 'เบิกใช้งาน' : 'รอยืนยัน'}
@@ -1027,6 +1067,9 @@ const AdminDashboard = ({ user }) => {
                           )}
                           {u.id !== user.id && (u.status === 'active' ?
                             <Button size="sm" variant="warning" onClick={() => updateUserStatus(u.id, 'pending')}>ระงับ</Button> : null
+                          )}
+                          {u.id !== user.id && isAdmin && (
+                            <Button size="sm" variant="info" className="ms-2" onClick={() => openPermModal(u)}>สิทธิ์</Button>
                           )}
                         </td>
                       </tr>
@@ -1787,7 +1830,7 @@ const AcademicDocsPage = ({ user }) => {
   );
 };
 
-const Footer = ({ user }) => {
+const Footer = ({ user, onLoginClick }) => {
   return (
     <footer className="pt-5 mt-5" id="contact">
       <Container className="py-5">
@@ -1835,13 +1878,15 @@ const Footer = ({ user }) => {
                 <Users size={18} className="text-primary-pink" /> สำหรับเจ้าหน้าที่
               </h5>
               {!user ? (
-                <Link to="/login">
-                  <Button className="w-100 btn-modern btn-modern-pink py-3">เข้าสู่ระบบ</Button>
-                </Link>
+                <div className="text-center">
+                  <Button onClick={onLoginClick} className="btn-modern btn-modern-pink py-3 px-4">เข้าสู่ระบบ</Button>
+                </div>
               ) : (
-                <Link to="/admin">
-                  <Button className="w-100 btn-modern btn-modern-slate py-3">จัดการข้อมูล</Button>
-                </Link>
+                <div className="text-center">
+                  <Link to="/admin">
+                    <Button className="btn-modern btn-modern-slate py-3 px-4">จัดการข้อมูล</Button>
+                  </Link>
+                </div>
               )}
             </div>
           </Col>
@@ -1849,6 +1894,114 @@ const Footer = ({ user }) => {
         <p className="text-center text-sub small fw-bold">© 2026 โรงพยาบาลคลองหาด. มุ่งมั่นในคุณภาพชีวิตที่ดี.</p>
       </Container>
     </footer>
+  );
+};
+
+const LoginModal = ({ show, handleClose, setAuthUser }) => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    fetch(`${API_BASE}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          localStorage.setItem('hospital_user', JSON.stringify(data.user));
+          setAuthUser(data.user);
+          handleClose();
+          navigate('/admin');
+        } else {
+          setError(data.message);
+        }
+      })
+      .catch(() => setError('เกิดข้อผิดพลาดในการเชื่อมต่อ'));
+  };
+
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>เข้าสู่ระบบเจ้าหน้าที่</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        {error && <Alert variant="danger">{error}</Alert>}
+        <Form onSubmit={handleLogin}>
+          <Form.Group className="mb-3 text-start">
+            <Form.Label className="form-label-modern">ชื่อผู้ใช้งาน</Form.Label>
+            <Form.Control
+              type="text"
+              className="input-modern"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-4 text-start">
+            <Form.Label className="form-label-modern">รหัสผ่าน</Form.Label>
+            <Form.Control
+              type="password"
+              className="input-modern"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </Form.Group>
+          <div className="text-center">
+            <Button type="submit" className="btn-modern btn-modern-pink py-3 px-5">
+              เข้าสู่ระบบ
+            </Button>
+          </div>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+const PermissionModal = ({ show, handleClose, form, onChange, onToggle, onSave }) => {
+  const perms = ['read','add','edit','delete'];
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>แก้ไขสิทธิของผู้ใช้</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form>
+          <Form.Group className="mb-3 text-start">
+            <Form.Label>บทบาท</Form.Label>
+            <Form.Select value={form.role} onChange={e => onChange('role', e.target.value)}>
+              <option value="staff">staff</option>
+              <option value="admin">admin</option>
+            </Form.Select>
+          </Form.Group>
+          <Form.Group className="mb-3 text-start">
+            <Form.Label>สิทธิ์</Form.Label>
+            <div>
+              {perms.map(p => (
+                <Form.Check
+                  key={p}
+                  type="checkbox"
+                  label={p}
+                  checked={form.permissions.includes(p)}
+                  onChange={() => onToggle(p)}
+                />
+              ))}
+            </div>
+          </Form.Group>
+        </Form>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleClose}>ยกเลิก</Button>
+        <Button variant="primary" onClick={onSave}>บันทึก</Button>
+      </Modal.Footer>
+    </Modal>
   );
 };
 
@@ -1957,6 +2110,7 @@ const AppointmentModal = ({ show, handleClose }) => {
 
 const App = () => {
   const [showModal, setShowModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -2012,8 +2166,17 @@ const App = () => {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/admin" element={user ? <AdminDashboard user={user} /> : <Navigate to="/login" />} />
         </Routes>
-        <Footer user={user} />
+        <Footer user={user} onLoginClick={() => setShowLoginModal(true)} />
         <AppointmentModal show={showModal} handleClose={() => setShowModal(false)} />
+        <LoginModal show={showLoginModal} handleClose={() => setShowLoginModal(false)} setAuthUser={setUser} />
+        <PermissionModal
+          show={showPermModal}
+          handleClose={() => setShowPermModal(false)}
+          form={permForm}
+          onChange={handlePermChange}
+          onToggle={togglePermission}
+          onSave={savePermissions}
+        />
       </div>
     </Router>
   );
