@@ -1,0 +1,236 @@
+{
+  "services": [
+    {
+      "id": 1,
+      "icon": "Activity",
+      "title": "ตรวจสุขภาพประจำปี",
+      "desc": "ตรวจคัดกรองสุขภาพที่ครอบคลุมทุกช่วงวัย",
+      "color": "pink"
+    },
+    {
+      "id": 2,
+      "icon": "HeartPulse",
+      "title": "ศูนย์โรคหัวใจ",
+      "desc": "รักษาและวินิจฉัยโรคหัวใจอย่างแม่นยำ",
+      "color": "slate"
+    },
+    {
+      "id": 3,
+      "icon": "Heart",
+      "title": "ศูนย์ฟอกไตเทียม",
+      "desc": "บริการฟอกไตมาตรฐานสากล สะอาด ปลอดภัย",
+      "color": "pink"
+    },
+    {
+      "id": 4,
+      "icon": "Users",
+      "title": "ศูนย์กุมารเวช",
+      "desc": "ดูแลพัฒนาการและสุขภาพเด็กโดยกุมารแพทย์",
+      "color": "slate"
+    }
+  ],
+  "news": [
+    {
+      "id": 1,
+      "image": "/uploads/1773208565154-PM2.5(1).jpg",
+      "tag": "คำแนะนำสุขภาพ",
+      "date": "10 มี.ค. 2024",
+      "title": "วิธีดูแลใจสู้ภัยฝุ่น PM 2.5 สำหรับชาวสระแก้ว",
+      "desc": "แนะวิธีการป้องกันตัวและเลือกใช้หน้ากากที่ถูกต้องเพื่อสุขภาพปอดที่ดี..."
+    },
+    {
+      "id": 1773197625389,
+      "title": "สุขภาพดิจิทัล",
+      "desc": "",
+      "tag": "ข่าวเด่น",
+      "image": "/uploads/1773208757843-images1.jpg",
+      "date": "11/3/2569",
+      "pdfUrl": "",
+      "deadline": ""
+    },
+    {
+      "id": 1773208896817,
+      "title": "Taiwan Excellence นำเสนอโซลูชันด้านสุขภาพดิจิทัล ปฏิวัติวงการดูแลสุขภาพ",
+      "desc": "โครงสร้างประชากรทั่วโลกกำลังเปลี่ยนแปลง เห็นได้ชัดจากแนวโน้มการเติบโตที่กำลังเข้าสู่สังคมผู้สูงอายุของหลายประเทศ เทคโนโลยีการดูแลสุขภาพจึงต้องปรับตัวเพื่อตอบรับการเปลี่ยนแปลงนี้เช่นกัน แอปพลิเคชัน IoT ทางการแพทย์ได้พัฒนาไปสู่อุตสาหกรรมขนาดใหญ่ที่มีศักยภาพสูง ซึ่งถือเป็นการปฏิวัติการให้บริการด้านการดูแลสุขภาพ",
+      "tag": "ข่าวประชาสัมพันธ์",
+      "image": "/uploads/1773208896624-images2.jpg",
+      "date": "11/3/2569",
+      "pdfUrl": "",
+      "deadline": "",
+      "author": "somsak",
+      "updatedAt": "13 มีนาคม 2569 เวลา 13:39"
+    }
+  ],
+  "medianPrices": [
+    {
+      "id": 1,
+      "title": "ประกาศจัดซื้อเวชภัณฑ์ยา 5 รายการ",
+      "date": "11 มี.ค. 2024",
+      "pdfUrl": "#",
+      "author": "somsak",
+      "updatedAt": "13 มีนาคม 2569 เวลา 13:39",
+      "image": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+      "id": 1773371102733,
+      "title": "ประกาศจัดซื้อจัดจ้างโปรแกรม มูลค่า 2500000 บาท",
+      "desc": "",
+      "tag": "",
+      "image": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=800",
+      "date": "13/3/2569",
+      "pdfUrl": "/uploads/1773371102716-booking_details.pdf",
+      "deadline": "",
+      "author": "somsak",
+      "updatedAt": "13 มีนาคม 2569 เวลา 13:39"
+    },
+    {
+      "id": 1773371858810,
+      "title": "ประกาศราคากลาง",
+      "desc": "โรงพยาบาลคลองหาด",
+      "tag": "",
+      "image": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=800",
+      "date": "13/3/2569",
+      "pdfUrl": "",
+      "deadline": "",
+      "author": "somsak",
+      "updatedAt": "13 มีนาคม 2569 เวลา 13:40"
+    }
+  ],
+  "jobs": [
+    {
+      "id": 1,
+      "title": "รับสมัครพยาบาลวิชาชีพ 2 อัตรา",
+      "deadline": "25 มี.ค. 2024",
+      "status": "open"
+    },
+    {
+      "id": 1773374183992,
+      "title": "รับสมัคร ผอ.",
+      "desc": "โรงพยาบาลคลองหาด",
+      "tag": "",
+      "image": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&q=80&w=800",
+      "date": "13/3/2569",
+      "pdfUrl": "",
+      "deadline": "31 มี.ค. 2569",
+      "status": "open"
+    }
+  ],
+  "activities": [
+    {
+      "id": 1,
+      "title": "กิจกรรมเดินวิ่งการกุศลเพื่อโรงพยาบาล",
+      "date": "20 เม.ย. 2024",
+      "image": "https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&q=80&w=800",
+      "author": "somsak",
+      "updatedAt": "13 มีนาคม 2569 เวลา 13:39"
+    },
+    {
+      "id": 1773209481344,
+      "title": "ประเมิน HA โรงพยาบาล 2569",
+      "desc": "อาจารย์จาก สรพ. ได้มีโอกาสเข้าร่วมตรวจประเมิน รพ.เพื่อรองรับมาตราฐาน HA 2569",
+      "tag": "",
+      "image": "/uploads/1773209481194-DSC_0312.jpg",
+      "date": "11/3/2569",
+      "pdfUrl": "",
+      "deadline": "",
+      "author": "somsak",
+      "updatedAt": "13 มีนาคม 2569 เวลา 13:39"
+    },
+    {
+      "id": 1773378623410,
+      "title": "วิ่งโรงพยาบาล",
+      "desc": "โรงพยาบาล",
+      "tag": "",
+      "image": "https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&q=80&w=800",
+      "date": "13/3/2569",
+      "pdfUrl": "",
+      "deadline": "",
+      "author": "somsak",
+      "updatedAt": "13 มีนาคม 2569 เวลา 13:39"
+    }
+  ],
+  "appointments": [],
+  "ita": [],
+  "academicDocs": [],
+  "bidding": [],
+  "stats": {
+    "specialists": "5+",
+    "emergency": "24/7",
+    "clients": "10k"
+  },
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password": "123",
+      "email": "admin@khlonghat.go.th",
+      "role": "admin",
+      "status": "active",
+      "permissions": [
+        "add",
+        "edit",
+        "delete",
+        "manage_users"
+      ]
+    },
+    {
+      "id": 1773199726384,
+      "username": "123",
+      "password": "123",
+      "email": "ITklonghad01@gmail.com",
+      "role": "admin",
+      "status": "active",
+      "permissions": [
+        "add",
+        "edit",
+        "read"
+      ]
+    },
+    {
+      "id": 1773200211541,
+      "username": "somsak",
+      "password": "123",
+      "email": "somsak99@gmail.com",
+      "role": "staff",
+      "status": "active",
+      "permissions": [
+        "add",
+        "edit",
+        "read"
+      ]
+    },
+    {
+      "id": 1773200247518,
+      "username": "Kittipun",
+      "password": "123",
+      "email": "ITklonghad01@gmail.com",
+      "role": "staff",
+      "status": "pending",
+      "permissions": [
+        "read"
+      ]
+    },
+    {
+      "id": 1773200462523,
+      "username": "Kittipun01",
+      "password": "123",
+      "email": "ITklonghaad@gmail.com",
+      "role": "staff",
+      "status": "pending",
+      "permissions": [
+        "read"
+      ]
+    },
+    {
+      "id": 1773200923966,
+      "username": "กิตติ",
+      "password": "123",
+      "email": "klonghad01@gmail.com",
+      "role": "staff",
+      "status": "pending",
+      "permissions": [
+        "read"
+      ]
+    }
+  ]
+}
