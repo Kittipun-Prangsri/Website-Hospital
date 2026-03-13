@@ -113,6 +113,31 @@
       "pdfUrl": "",
       "deadline": "31 มี.ค. 2569",
       "status": "open"
+    },
+    {
+      "id": 1773395498676,
+      "title": "\tรับสมัครพยาบาลวิชาชีพ 10 อัตรา",
+      "desc": "",
+      "tag": "",
+      "image": "/images/logo-footer.webp",
+      "date": "13/3/2569",
+      "pdfUrl": "",
+      "deadline": "25 พค.2569",
+      "author": "somsak",
+      "updatedAt": "13 มีนาคม 2569 เวลา 16:58"
+    },
+    {
+      "id": 1773396038937,
+      "title": "รับสมัครพยาบาลวิชาชีพ 1 อัตรา",
+      "desc": "",
+      "tag": "",
+      "image": "https://via.placeholder.com/800x400?text=%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B8%AA%E0%B8%A1%E0%B8%B1%E0%B8%84%E0%B8%A3%E0%B8%9E%E0%B8%A2%E0%B8%B2%E0%B8%9A%E0%B8%B2%E0%B8%A5%E0%B8%A7%E0%B8%B4%E0%B8%8A%E0%B8%B2%E0%B8%8A%E0%B8%B5%E0%B8%9E%201%20%E0%B8%AD%E0%B8%B1%E0%B8%95%E0%B8%A3%E0%B8%B2",
+      "date": "13/3/2569",
+      "pdfUrl": "",
+      "deadline": "31 มี.ค. 2569",
+      "author": "123",
+      "updatedAt": "13 มีนาคม 2569 เวลา 17:01",
+      "status": "open"
     }
   ],
   "activities": [
@@ -150,7 +175,50 @@
     }
   ],
   "appointments": [],
-  "ita": [],
+  "ita": [
+    {
+      "id": 1773392303331,
+      "title": "ระเบียบปฏิบัติ",
+      "desc": "ระเบียบปฏิบัติ",
+      "tag": "",
+      "image": "https://images.unsplash.com/photo-1576091160550-217359f42f8c?auto=format&fit=crop&q=80&w=800&sig=1773392303321",
+      "date": "13/3/2569",
+      "pdfUrl": "",
+      "deadline": "",
+      "author": "somsak",
+      "updatedAt": "13 มีนาคม 2569 เวลา 15:58",
+      "year": "2569",
+      "category": "ข้อมูลพื้นฐานของหน่วยงาน"
+    },
+    {
+      "id": 1773392746931,
+      "title": "ระเบียบปฏิบัติ",
+      "desc": "",
+      "tag": "",
+      "image": "https://images.unsplash.com/photo-1576091160550-217359f42f8c?auto=format&fit=crop&q=80&w=800&sig=1773392746574",
+      "date": "13/3/2569",
+      "pdfUrl": "",
+      "deadline": "",
+      "author": "somsak",
+      "updatedAt": "13 มีนาคม 2569 เวลา 16:08",
+      "year": "2567",
+      "category": "การประชาสัมพันธ์"
+    },
+    {
+      "id": 1773395411263,
+      "title": "ระเบียบปฏิบัติ2",
+      "desc": "",
+      "tag": "",
+      "image": "/images/logo-footer.webp",
+      "date": "13/3/2569",
+      "pdfUrl": "",
+      "deadline": "",
+      "year": "2568",
+      "category": "การปฏิบัติหน้าที่",
+      "author": "somsak",
+      "updatedAt": "13 มีนาคม 2569 เวลา 16:50"
+    }
+  ],
   "academicDocs": [],
   "bidding": [],
   "stats": {
@@ -171,7 +239,8 @@
         "edit",
         "delete",
         "manage_users"
-      ]
+      ],
+      "image": "https://via.placeholder.com/200x200?text=admin"
     },
     {
       "id": 1773199726384,
@@ -184,7 +253,8 @@
         "add",
         "edit",
         "read"
-      ]
+      ],
+      "image": "https://via.placeholder.com/200x200?text=123"
     },
     {
       "id": 1773200211541,
@@ -197,7 +267,8 @@
         "add",
         "edit",
         "read"
-      ]
+      ],
+      "image": "https://via.placeholder.com/200x200?text=somsak"
     },
     {
       "id": 1773200247518,
@@ -208,7 +279,8 @@
       "status": "pending",
       "permissions": [
         "read"
-      ]
+      ],
+      "image": "https://via.placeholder.com/200x200?text=Kittipun"
     },
     {
       "id": 1773200462523,
@@ -219,7 +291,8 @@
       "status": "pending",
       "permissions": [
         "read"
-      ]
+      ],
+      "image": "https://via.placeholder.com/200x200?text=Kittipun01"
     },
     {
       "id": 1773200923966,
@@ -230,7 +303,8 @@
       "status": "pending",
       "permissions": [
         "read"
-      ]
+      ],
+      "image": "https://via.placeholder.com/200x200?text=%E0%B8%81%E0%B8%B4%E0%B8%95%E0%B8%95%E0%B8%B4"
     }
   ]
 }

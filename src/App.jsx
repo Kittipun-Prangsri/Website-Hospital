@@ -51,7 +51,14 @@ import {
 } from 'lucide-react';
 import { motion as Motion } from 'framer-motion';
 
-const API_BASE = `http://${window.location.hostname}:5000/api`;
+const API_BASE = 'http://localhost:5000/api';
+
+const toFullUrl = (path) => {
+  if (!path) return '';
+  if (path.startsWith('http')) return path;
+  const base = API_BASE.replace('/api', '');
+  return path.startsWith('/') ? `${base}${path}` : `${base}/${path}`;
+};
 
 const IconMap = {
   Activity: <Activity />,
@@ -62,7 +69,7 @@ const IconMap = {
 
 // --- Components ---
 
-const CustomNavbar = ({ onBookClick, user, onLogout }) => {
+const CustomNavbar = ({ onBookClick, user, onLogout, onLoginClick }) => {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
 
@@ -82,7 +89,7 @@ const CustomNavbar = ({ onBookClick, user, onLogout }) => {
     >
       <Container>
         <Navbar.Brand as={Link} to="/" className="d-flex align-items-center gap-3">
-          <img src="images/logo.webp" alt="Logo" className="logo-shadow" style={{ height: '45px', width: 'auto' }} />
+          <img src="/images/logo.webp" alt="Logo" className="logo-shadow" style={{ height: '45px', width: 'auto' }} />
         </Navbar.Brand>
         <Navbar.Toggle className="border-0 shadow-none" aria-controls="main-nav" />
         <Navbar.Collapse id="main-nav">
@@ -120,10 +127,6 @@ const CustomNavbar = ({ onBookClick, user, onLogout }) => {
                 <Link to="/jobs" className="nav-dropdown-item">รับสมัครงาน</Link>
                 <Link to="/bidding" className="nav-dropdown-item">ข่าวประกวดราคา</Link>
                 <Link to="/median-prices" className="nav-dropdown-item">ราคากลาง</Link>
-                <div className="nav-dropdown-divider my-1 border-bottom"></div>
-                <Link to="/ita/2567" className="nav-dropdown-item">ITA 2567</Link>
-                <Link to="/ita/2568" className="nav-dropdown-item">ITA 2568</Link>
-                <Link to="/ita/2569" className="nav-dropdown-item">ITA 2569</Link>
               </div>
             </div>
 
@@ -141,6 +144,7 @@ const CustomNavbar = ({ onBookClick, user, onLogout }) => {
               </div>
             </div>
 
+            <Nav.Link as={Link} to="/ita">ITA</Nav.Link>
             <Nav.Link href="#contact">ติดต่อเรา</Nav.Link>
             {user && (
               <Nav.Link as={Link} to="/admin" className="text-primary-pink fw-bold">กระดานควบคุม</Nav.Link>
@@ -392,7 +396,7 @@ const NewsSection = ({ user }) => {
               >
                 <div className="position-relative overflow-hidden" style={{ height: '220px' }}>
                   <img
-                    src={item.image.startsWith('http') ? item.image : `${API_BASE.replace('/api', '')}${item.image}`}
+                    src={toFullUrl(item.image)}
                     alt={item.title}
                     className="w-100 h-100 object-cover"
                   />
@@ -944,20 +948,7 @@ const AdminDashboard = ({ user }) => {
 
     // Auto-generate image if not present
     if (!finalData.image) {
-      const keywordMap = {
-        'news': 'hospital,news',
-        'median': 'document,finance',
-        'jobs': 'career,office',
-        'activities': 'volunteer,health',
-        'bidding': 'construction,paper',
-        'academic': 'university,research',
-        'ita': 'integrity,government'
-      };
-      const keyword = keywordMap[activeTab] || 'medical';
-      finalData.image = `https://images.unsplash.com/photo-1576091160550-217359f42f8c?auto=format&fit=crop&q=80&w=800&sig=${Date.now()}`;
-      if (activeTab === 'median') finalData.image = 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=800';
-      if (activeTab === 'jobs') finalData.image = 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&q=80&w=800';
-      if (activeTab === 'activities') finalData.image = 'https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&q=80&w=800';
+      finalData.image = `https://via.placeholder.com/800x400?text=${encodeURIComponent(finalData.title || 'No Title')}`;
     }
 
     let uploadEndpoint = activeTab;
@@ -1034,7 +1025,8 @@ const AdminDashboard = ({ user }) => {
         {message && <Alert variant="success">{message}</Alert>}
 
         {activeTab === 'users' ? (
-          <Row>
+          <>
+            <Row>
             <Col lg={12}>
               <div className="admin-content-card">
                 <h4 className="fw-bold mb-4">รายชื่อเจ้าหน้าที่</h4>
@@ -1079,6 +1071,15 @@ const AdminDashboard = ({ user }) => {
               </div>
             </Col>
           </Row>
+          <PermissionModal
+            show={showPermModal}
+            handleClose={() => setShowPermModal(false)}
+            form={permForm}
+            onChange={handlePermChange}
+            onToggle={togglePermission}
+            onSave={savePermissions}
+          />
+          </>
         ) : activeTab === 'appointments' ? (
           <Row>
             <Col lg={12}>
@@ -1386,7 +1387,7 @@ const PubDetailPage = ({ category = 'news', user }) => {
             {item.image && (
               <div className="rounded-4 overflow-hidden mb-4 shadow-soft bg-light">
                 <img
-                  src={item.image.startsWith('http') ? item.image : `${API_BASE.replace('/api', '')}${item.image}`}
+                  src={toFullUrl(item.image)}
                   alt={item.title} className="w-100" style={{ maxHeight: '500px', objectFit: 'contain' }}
                 />
               </div>
@@ -1632,81 +1633,83 @@ const ActivitiesPage = ({ user }) => {
     </div>
   );
 };
-// ITA Year Page (generalized)
+// ITA Page (single unified page for all years)
 const ITAPage = ({ user }) => {
   const { year } = useParams();
+  const navigate = useNavigate();
   const [items, setItems] = useState([]);
+
   useEffect(() => {
     fetch(`${API_BASE}/ita?year=${year}`)
       .then(r => r.json())
-      .then(data => setItems(Array.isArray(data) ? data.filter(d => String(d.year) === String(year)) : []))
+      .then(data => setItems(Array.isArray(data) ? data : []))
       .catch(() => setItems([]));
   }, [year]);
-
-  const ITA_CATEGORIES = [
-    '\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e1e\u0e37\u0e49\u0e19\u0e10\u0e32\u0e19\u0e02\u0e2d\u0e07\u0e2b\u0e19\u0e48\u0e27\u0e22\u0e07\u0e32\u0e19',
-    '\u0e01\u0e32\u0e23\u0e1b\u0e23\u0e30\u0e0a\u0e32\u0e2a\u0e31\u0e21\u0e1e\u0e31\u0e19\u0e18\u0e4c',
-    '\u0e01\u0e32\u0e23\u0e1b\u0e0f\u0e34\u0e1a\u0e31\u0e15\u0e34\u0e2b\u0e19\u0e49\u0e32\u0e17\u0e35\u0e48',
-    '\u0e21\u0e32\u0e15\u0e23\u0e01\u0e32\u0e23\u0e2a\u0e48\u0e07\u0e40\u0e2a\u0e23\u0e34\u0e21\u0e04\u0e38\u0e13\u0e18\u0e23\u0e23\u0e21',
-    '\u0e01\u0e32\u0e23\u0e1a\u0e23\u0e34\u0e2b\u0e32\u0e23\u0e07\u0e32\u0e19\u0e40\u0e07\u0e34\u0e19',
-  ];
 
   return (
     <div className="pub-page">
       <PageHeader
         breadcrumb={`ITA ${year}`}
         title={`\u0e01\u0e32\u0e23\u0e1b\u0e23\u0e30\u0e40\u0e21\u0e34\u0e19\u0e04\u0e38\u0e13\u0e18\u0e23\u0e23\u0e21 (ITA) \u0e1b\u0e35 ${year}`}
-        subtitle="\u0e2a\u0e33\u0e2b\u0e23\u0e31\u0e1a\u0e40\u0e08\u0e49\u0e32\u0e2b\u0e19\u0e49\u0e32\u0e17\u0e35\u0e48\u0e41\u0e25\u0e30\u0e1c\u0e39\u0e49\u0e21\u0e35\u0e2a\u0e48\u0e27\u0e19\u0e44\u0e14\u0e49\u0e2a\u0e48\u0e27\u0e19\u0e40\u0e2a\u0e35\u0e22"
+        subtitle="แสดงข้อมูลและเอกสารตามเกณฑ์ ITA ของปีที่เลือก"
       />
+      <Container className="py-4">
+        <div className="d-flex align-items-center gap-2 flex-wrap mb-4">
+          {['2567','2568','2569'].map(y => (
+            <Button
+              key={y}
+              variant={y === year ? 'primary' : 'outline-secondary'}
+              size="sm"
+              onClick={() => navigate(`/ita/${y}`)}
+            >
+              ITA {y}
+            </Button>
+          ))}
+        </div>
+      </Container>
       <Container className="py-5">
-        {ITA_CATEGORIES.map((cat, ci) => {
-          const catItems = items.filter(i => i.category === cat);
-          return (
-            <div key={ci} className="mb-5">
-              <h5 className="fw-bold mb-3 d-flex align-items-center gap-2">
-                <span className="ita-cat-badge">{ci + 1}</span> {cat}
-              </h5>
-              <Row className="g-3">
-                {catItems.length === 0 && (
-                  <Col><p className="text-sub small">\u0e22\u0e31\u0e07\u0e44\u0e21\u0e48\u0e21\u0e35\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e43\u0e19\u0e2b\u0e21\u0e27\u0e14\u0e2b\u0e21\u0e39\u0e48\u0e19\u0e35\u0e49</p></Col>
-                )}
-                {catItems.map(item => (
-                  <Col lg={6} key={item.id}>
-                    <div className="pub-card d-flex align-items-center gap-3 py-3">
-                      <div className="pub-card-icon" style={{ width: '48px', height: '48px' }}>
-                        <FileText size={22} className="text-primary-pink" />
-                      </div>
-                      <div className="flex-grow-1">
-                        <div className="small fw-bold">{item.title}</div>
-                        <div className="small text-sub d-flex align-items-center gap-2">
-                          {item.date}
-                          {item.author && <span className="text-primary-pink fw-bold">/ {item.author}</span>}
-                        </div>
-                      </div>
-                      {user && (
-                        <Link to="/admin" state={{ editItem: item, tab: 'ita' }} className="btn btn-sm btn-outline-warning rounded-pill px-2">
-                          <Edit size={12} />
-                        </Link>
-                      )}
-                      <Link to={`/ita/${year}/${item.id}`} className="btn btn-sm btn-light rounded-pill px-2">
-                        <ChevronRight size={14} />
-                      </Link>
-                      {item.pdfUrl && (
-                        <a
-                          href={item.pdfUrl.startsWith('http') ? item.pdfUrl : `${API_BASE.replace('/api', '')}${item.pdfUrl}`}
-                          target="_blank" rel="noreferrer"
-                          className="btn btn-sm btn-outline-danger rounded-pill flex-shrink-0 d-flex align-items-center gap-1"
-                        >
-                          <Download size={13} />
-                        </a>
-                      )}
+        <Row className="g-4">
+          {items.length === 0 && (
+            <Col><p className="text-center text-sub py-5">ยังไม่มีข้อมูล ITA ในปีนี้</p></Col>
+          )}
+          {items.map(item => (
+            <Col lg={6} xl={4} key={item.id}>
+              <Motion.div
+                whileHover={{ y: -10 }}
+                className="bg-white rounded-[32px] overflow-hidden shadow-soft border border-light h-100 d-flex flex-column"
+              >
+                <div className="position-relative overflow-hidden" style={{ height: '200px' }}>
+                  <img
+                    src={item.image.startsWith('http') ? item.image : `${API_BASE.replace('/api', '')}${item.image}`}
+                    alt={item.title}
+                    className="w-100 h-100 object-cover"
+                  />
+                  {item.category && (
+                    <div className="position-absolute top-0 start-0 m-3 badge-pink bg-white shadow-sm">
+                      {item.category}
                     </div>
-                  </Col>
-                ))}
-              </Row>
-            </div>
-          );
-        })}
+                  )}
+                </div>
+                <div className="p-4 flex-grow-1 d-flex flex-column">
+                  <div className="small text-sub fw-bold mb-2">{item.date}</div>
+                  <h5 className="fw-bold mb-3" style={{ fontSize: '1.1rem', lineHeight: '1.4' }}>{item.title}</h5>
+                  <p className="text-sub small mb-4 line-clamp-2">{item.desc}</p>
+                  {item.author && <div className="extra-small text-primary-pink mb-3 fw-bold">โดย: {item.author}</div>}
+                  <div className="mt-auto d-flex justify-content-between align-items-center">
+                    <Link to={`/ita/${year}/${item.id}`} className="text-decoration-none text-primary-pink fw-bold small d-flex align-items-center gap-2">
+                      อ่านต่อ <ChevronRight size={14} />
+                    </Link>
+                    {user && (
+                      <Link to="/admin" state={{ editItem: item, tab: 'ita' }} className="btn btn-sm btn-outline-warning rounded-pill px-3">
+                        <Edit size={12} className="me-1" /> แก้ไข
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              </Motion.div>
+            </Col>
+          ))}
+        </Row>
       </Container>
     </div>
   );
@@ -1836,7 +1839,7 @@ const Footer = ({ user, onLoginClick }) => {
       <Container className="py-5">
         <Row className="g-5 border-bottom pb-5 mb-4">
           <Col lg={4}>
-            <a href="/home"><img src="images/logo.webp" alt="Logo" className="logo-shadow" style={{ height: '45px', width: 'auto' }} /></a>
+            <Link to="/"><img src="/images/logo.webp" alt="Logo" className="logo-shadow" style={{ height: '45px', width: 'auto' }} /></Link>
             {/* <div className="d-flex align-items-center gap-3 mb-4">
               <div className="bg-primary-pink p-2 rounded-4 text-white">
                 <Activity size={24} />
@@ -2108,6 +2111,35 @@ const AppointmentModal = ({ show, handleClose }) => {
 
 // --- App Root ---
 
+const TitleUpdater = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    const mapTitle = (pathname) => {
+      if (pathname === '/') return 'หน้าแรก - โรงพยาบาลคลองหาด';
+      if (pathname.startsWith('/about')) return 'เกี่ยวกับเรา - โรงพยาบาลคลองหาด';
+      if (pathname.startsWith('/vision-mission')) return 'วิสัยทัศน์/พันธกิจ - โรงพยาบาลคลองหาด';
+      if (pathname.startsWith('/organization-structure')) return 'โครงสร้างองค์กร - โรงพยาบาลคลองหาด';
+      if (pathname.startsWith('/mission-responsibilities')) return 'หน้าที่ความรับผิดชอบ - โรงพยาบาลคลองหาด';
+      if (pathname.startsWith('/news')) return 'ข่าวประชาสัมพันธ์ - โรงพยาบาลคลองหาด';
+      if (pathname.startsWith('/median-prices')) return 'ราคากลาง - โรงพยาบาลคลองหาด';
+      if (pathname.startsWith('/jobs')) return 'สมัครงาน - โรงพยาบาลคลองหาด';
+      if (pathname.startsWith('/activities')) return 'กิจกรรม - โรงพยาบาลคลองหาด';
+      if (pathname.startsWith('/bidding')) return 'ประกวดราคา - โรงพยาบาลคลองหาด';
+      if (pathname.startsWith('/ita')) return 'ITA - โรงพยาบาลคลองหาด';
+      if (pathname.startsWith('/academic-docs')) return 'เอกสารวิชาการ - โรงพยาบาลคลองหาด';
+      if (pathname.startsWith('/login')) return 'เข้าสู่ระบบ - โรงพยาบาลคลองหาด';
+      if (pathname.startsWith('/register')) return 'ลงทะเบียน - โรงพยาบาลคลองหาด';
+      if (pathname.startsWith('/admin')) return 'แดชบอร์ด Admin - โรงพยาบาลคลองหาด';
+      return 'โรงพยาบาลคลองหาด';
+    };
+
+    document.title = mapTitle(location.pathname);
+  }, [location]);
+
+  return null;
+};
+
 const App = () => {
   const [showModal, setShowModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -2127,11 +2159,13 @@ const App = () => {
 
   return (
     <Router>
+      <TitleUpdater />
       <div className="app-container">
         <CustomNavbar
           onBookClick={() => setShowModal(true)}
           user={user}
           onLogout={handleLogout}
+          onLoginClick={() => setShowLoginModal(true)}
         />
         <Routes>
           <Route path="/" element={
@@ -2158,6 +2192,7 @@ const App = () => {
           <Route path="/bidding" element={<BiddingNewsPage user={user} />} />
           <Route path="/bidding/:id" element={<PubDetailPage category="bidding" user={user} />} />
           <Route path="/ita/:year" element={<ITAPage user={user} />} />
+          <Route path="/ita" element={<Navigate to="/ita/2568" replace />} />
           <Route path="/ita/:year/:id" element={<PubDetailPage category="ita" user={user} />} />
           <Route path="/academic-docs" element={<AcademicDocsPage user={user} />} />
           <Route path="/academic-docs/:sub" element={<AcademicDocsPage user={user} />} />
@@ -2169,14 +2204,6 @@ const App = () => {
         <Footer user={user} onLoginClick={() => setShowLoginModal(true)} />
         <AppointmentModal show={showModal} handleClose={() => setShowModal(false)} />
         <LoginModal show={showLoginModal} handleClose={() => setShowLoginModal(false)} setAuthUser={setUser} />
-        <PermissionModal
-          show={showPermModal}
-          handleClose={() => setShowPermModal(false)}
-          form={permForm}
-          onChange={handlePermChange}
-          onToggle={togglePermission}
-          onSave={savePermissions}
-        />
       </div>
     </Router>
   );

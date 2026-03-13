@@ -128,7 +128,8 @@ app.post('/api/register', (req, res) => {
         email,
         role: 'staff',
         status: 'pending',
-        permissions: ['read'] // Default simple access
+        permissions: ['read'], // Default simple access
+        image: `https://via.placeholder.com/200x200?text=${encodeURIComponent(username)}`
     };
 
     db.users.push(newUser);
